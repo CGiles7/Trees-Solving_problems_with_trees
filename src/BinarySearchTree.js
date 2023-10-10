@@ -145,14 +145,48 @@ class BinarySearchTree {
   }
 
   countLeaves(count = 0) {
-    // your solution here
-    return count;
+  if (!this.left && !this.right) {
+    // If the current node is a leaf, increment the count.
+    return count + 1;
   }
 
-  isBalancedBST() {
-    // your solution here
-    return 0;
+  // Recursively count the leaves in the left and right subtrees.
+  if (this.left) {
+    count = this.left.countLeaves(count);
   }
+  if (this.right) {
+    count = this.right.countLeaves(count);
+  }
+
+  return count;
+}
+
+  isBalancedBST() {
+  const { isBalanced, height } = this._checkBalance();
+  return isBalanced ? height : -1;
+}
+
+_checkBalance() {
+  if (!this) {
+    // An empty tree is balanced with a height of -1.
+    return { isBalanced: true, height: -1 };
+  }
+
+  // Recursively check the balance of the left and right subtrees.
+  const leftResult = this.left ? this.left._checkBalance() : { isBalanced: true, height: -1 };
+  const rightResult = this.right ? this.right._checkBalance() : { isBalanced: true, height: -1 };
+
+  const isLeftBalanced = leftResult.isBalanced;
+  const isRightBalanced = rightResult.isBalanced;
+  const leftHeight = leftResult.height;
+  const rightHeight = rightResult.height;
+
+  // Check if the current subtree is balanced and calculate its height.
+  const isBalanced = isLeftBalanced && isRightBalanced && Math.abs(leftHeight - rightHeight) <= 1;
+  const height = 1 + Math.max(leftHeight, rightHeight);
+
+  return { isBalanced, height };
+}
 
   _replaceWith(node) {
     if (this.parent) {
